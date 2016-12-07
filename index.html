@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>调用camera</title>
+</head>
+<body>
+<video id="video" width="640" height="480" autoplay></video>
+<button id="snap">snap photo</button>
+<canvas id="canvas" width="640" height="480"></canvas>
+<script>
+    window.addEventListener("DOMContentLoaded", function () {
+        var canvas = document.getElementById("canvas"),
+            context = canvas.getContext("2d"),
+            video = document.getElementById("video"),
+            videoObj = {"video": true},
+            errBack = function (error) {
+                console.log("video capture error: " + error);
+            };
+        if (navigator.getUserMedia) {
+            navigator.getUserMedia(videoObj, function (stream) {
+                video.src = stream;
+                video.play();
+            }, errBack);
+            console.log("通用状况");
+            console.log(video.src)
+        }
+        else if (navigator.webKitGetUserMedia) {
+            navigator.webKitGetUserMedia(videoObj, function (stream) {
+                video.src = window.webkitURL.createObjectURL(stream);
+                video.play();
+            }, errBack);
+            console.log("chrome");
+        }
+        else if (navigator.mozGetUserMedia) {
+            navigator.mozGetUserMedia(videoObj, function (stream) {
+                video.src = window.URL.createObjectURL(stream);
+                video.play();
+            }, errBack);
+            console.log("moz");
+        }
+        ;
+
+        document.getElementById("snap")
+            .addEventListener("click", function () {
+                context.drawImage(video, 0, 0, 640, 480);
+                console.log(context);
+            });
+    }, false);
+</script>
+</body>
+</html>
